@@ -276,7 +276,9 @@ module Isucari
 
       item_id = params['item_id'].to_i
       created_at = params['created_at'].to_i
-
+      # debug1
+      time1 = Time.now
+      # debug1
       db.query('BEGIN')
       items = if item_id > 0 && created_at > 0
         # paging
@@ -295,7 +297,10 @@ module Isucari
           halt_with_error 500, 'db error'
         end
       end
-
+      # debug2
+      time2 = Time.now
+      puts "1 個目: #{time2 - time1}"
+      # debug2
       item_details = items.map do |item|
         seller = get_user_simple_by_id(item['seller_id'])
         if seller.nil?
@@ -361,6 +366,10 @@ module Isucari
 
         item_detail
       end
+      # debug3
+      time3 = Time.now
+      puts "2 個目: #{time3 - time2}"
+      # debug3
 
       db.query('COMMIT')
 
@@ -375,6 +384,10 @@ module Isucari
         'has_next' => has_next
       }
 
+      # debug4
+      time4 = Time.now
+      puts "3 個目: #{time4 - time3}"
+      # debug4
       response.to_json
     end
 
@@ -1195,7 +1208,7 @@ module Isucari
     # getReports
     get '/reports.json' do
       transaction_evidences = db.xquery('SELECT * FROM `transaction_evidences` WHERE `id` > 15007')
-      
+
       response = transaction_evidences.map do |transaction_evidence|
         {
           'id' => transaction_evidence['id'],
